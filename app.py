@@ -1,5 +1,4 @@
 # Based on tutorial found on Digital Ocean
-from datetime import timedelta
 import os
 from flask import Flask, render_template, redirect, request, url_for
 from flask_sqlalchemy import SQLAlchemy
@@ -13,18 +12,11 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 # Instantiate Flask application
 app = Flask(__name__)
 
-
-# def create_app():
-#     app = Flask(__name__)
-#     with app.app_context():
-#         init_db()
-#     return app
-
 # Configure 
 app.config['SQLALCHEMY_DATABASE_URI'] = \
     'sqlite:///' + os.path.join(BASE_DIR, 'database.db') # locate database inside project dir
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # escape notifications for every database modificaitons
-app.permanent_session_lifetime = timedelta(days=1)
+# app.permanent_session_lifetime = timedelta(days=1)
 
 # connect application with SQLAlchmey
 db = SQLAlchemy(app) # or can be connect app using 'db.init_app(app)' after creating SQLAlchemy empty instance
@@ -53,6 +45,11 @@ class Comment(db.Model):
         return f'<Comment "{self.content[:20]}...">'
     
 
+@app.route('/')
+def index():
+     posts = Post.query.all()
+     return render_template('index.html', posts=posts)
+
 """Creating Database done by using Flask shell
     with virtual env activated, set the app.py file as your Flask application
     using > $ export FLASK_APP=app
@@ -61,28 +58,26 @@ class Comment(db.Model):
     db.create_all() function to create the tables associated with your models
     >> from app import db, Post, Comment
     >> db.create_all()
-    
-"""
-with app.app_context():
-    db.create_all()
 
-# post1 = Post(title="Post The First", content='Content for the first post')
-# post2 = Post(title='Post The Second', content='Content for the Second post')
-# post3 = Post(title='Post The Third', content='Content for the third post')
+    # post1 = Post(title="Post The First", content='Content for the first post')
+    # post2 = Post(title='Post The Second', content='Content for the Second post')
+    # post3 = Post(title='Post The Third', content='Content for the third post')
 
-# # create a few comment objects
-# comment1 = Comment(content='Comment for the first post', post=post1)
-# comment2 = Comment(content='Comment for the second post', post=post2)
-# comment3 = Comment(content='Another comment for the seconde post', post_id=2)
-# comment4 = Comment(content='Another comment for the first post', post_id=1)
+    # # create a few comment objects
+    # comment1 = Comment(content='Comment for the first post', post=post1)
+
+    # comment2 = Comment(content='Comment for the second post', post=post2)
+    # comment3 = Comment(content='Another comment for the seconde post', post_id=2)
+    # comment4 = Comment(content='Another comment for the first post', post_id=1)
 
 
-# # add all instance of model or rows of data to the session (making ready for insertion)
-# db.session.add_all([post1, post2, post3])
-# db.session.add_all([comment1, comment2, comment3, comment4])
+    # # add all instance of model or rows of data to the session (making ready for insertion)
+    # db.session.add_all([post1, post2, post3])
+    # db.session.add_all([comment1, comment2, comment3, comment4])
 
-# # Then insert into corresponding database tables
+    # # Then insert into corresponding database tables
 # db.session.commit()
+"""
 
 
 if __name__ == '__main__':
