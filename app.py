@@ -50,6 +50,36 @@ def index():
      posts = Post.query.all()
      return render_template('index.html', posts=posts)
 
+@app.route('/<int:post_id>/', methods=['GET', 'POST'])
+def post(post_id):
+     # using Model.query() is Legacy query func, according to documentation, prefer use db.session.execute()/ SQLAlchemy.func() instead
+     # post = User.query.get_or_404(post_id)
+     post = db.get_or_404(Post, post_id)
+
+     if request.method == 'POST':
+          comment = Comment(content=request.form['content'], post=post)
+          db.session.add(comment)
+          db.session.commit()
+          return redirect(url_for('post', post_id=post.id))
+     
+     return render_template('post.html', post=post)
+
+
+@app.route('/comments/')
+def comments():
+     comments = db.session.execute(db.select(Comment).order_by(Comment.id.desc())).scalars()
+     return render_template('comments.html', comments=comments)
+     
+
+@app.post('/comments/<int:comment_id>/delete') # short for app.route('', methods=['POST'])
+def delete_comment(comment_id):
+     comment = db.get_or_404(Comment, comment_id)
+     post_id = comment.post_id
+     db.session.delete(comment)
+     db.session.commit()
+     return redirect(url_for('post', post_id=post_id))
+
+
 """Creating Database done by using Flask shell
     with virtual env activated, set the app.py file as your Flask application
     using > $ export FLASK_APP=app

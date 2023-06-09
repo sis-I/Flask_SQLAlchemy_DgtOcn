@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <span class="title"><h1>{% block title %}Detail Post{% endblock  %}</h1></span>
+<div class="content">
+  <div class="post">
+    <p><b>#{{ post.id }}</b></p>
+    <b>
+      <p class="title">{{ post.title }}</p>
+    </b>
+    <div class="content">
+      <p>{{ post.content }}</p>
+    </div>
+    <hr>
+    <h3>Comments</h3>
+    <form action="{{ url_for('post', post_id=post.id)}}" method="post">
+      <p>
+        <textarea name="content" cols="60" rows="5" placeholder="Comment"></textarea>
+      </p>
+      <p>
+        <button type="submit">Add Comment</button>
+      </p>
+    </form>
+    {% for comment in post.comments %}
+      <div class="comment">
+        <p>#{{ comment.id }}</p>
+        <p>{{ comment.content }}</p>
+        <form action="{{ url_for('delete_comment', comment_id=comment.id)}}" method='post'>
+          <input type="submit" value="Delete Comment"
+            onclick="return confirm('Are you sure you want to delete?')"> <!-- call confirm() method function available in web browsers
+                                                                            to display confirmation message before submitting the request -->
+        </form>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock  %}
