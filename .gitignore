@@ -1,3 +1,7 @@
 .venv/
 Pipfile*
 __pycache__/
+.python-version
+
+# Envriorment
+.env

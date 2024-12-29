@@ -2,8 +2,13 @@
 import os
 from flask import Flask, render_template, redirect, request, url_for
 from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
 
 
+# Load environment variables from .env file
+load_dotenv('.env')
+
+print(os.getenv('DATABASE_URL'))
 # Set up a database file path
 # os.path.abspath() get the absolute path of the current file's dir
 # __file__ variable holds the pathname of the current app.py file
